@@ -1,0 +1,69 @@
+import RPi.GPIO as GPIO
+import time
+
+# Sensor and motor pin connections 
+TRIGGER_PIN = 17
+ECHO_PIN = 27
+MOTOR_FORWARD_PIN = 22
+MOTOR_BACKWARD_PIN = 23
+
+# Sensor settings
+SENSOR_MIN_DISTANCE = 0.5  # Minimum detection distance in cm
+
+# GPIO setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(TRIGGER_PIN, GPIO.OUT)
+GPIO.setup(ECHO_PIN, GPIO.IN)
+GPIO.setup(MOTOR_FORWARD_PIN, GPIO.OUT)
+GPIO.setup(MOTOR_BACKWARD_PIN, GPIO.OUT)
+
+def send_pulse():
+    """Sends a 10 microsecond pulse to the trigger pin."""
+    GPIO.output(TRIGGER_PIN, True)
+    time.sleep(0.00001)  # Ensure accurate pulse duration
+    GPIO.output(TRIGGER_PIN, False)
+
+def get_distance():
+    """Measures the distance using the sensor and returns it in cm."""
+    send_pulse()
+
+    pulse_start = time.time()
+    while GPIO.input(ECHO_PIN) == 0:
+        pass  # Wait for the leading edge of the echo pulse
+    pulse_start = time.time()
+
+    while GPIO.input(ECHO_PIN) == 1:
+        pass  # Wait for the trailing edge of the echo pulse
+    pulse_end = time.time()
+
+    pulse_duration = pulse_end - pulse_start
+    distance = pulse_duration * 17150 / 2  # Speed of sound in cm/s, round trip distance
+    return distance
+
+def motor_forward():
+    """Rotates the motor forward (set logic based on your motor driver)."""
+    GPIO.output(MOTOR_FORWARD_PIN, True)
+    GPIO.output(MOTOR_BACKWARD_PIN, False)
+
+def stop_motor():
+    """Stops the motor (set logic based on your motor driver)."""
+    GPIO.output(MOTOR_FORWARD_PIN, False)
+    GPIO.output(MOTOR_BACKWARD_PIN, False)
+
+try:
+    while True:
+        distance = get_distance()
+
+        if distance <= SENSOR_MIN_DISTANCE:
+            print("Obstacle detected at", distance, "cm. Stopping motor.")
+            stop_motor()
+        else:
+            print("No obstacle detected. Keep moving forward.")
+            motor_forward()
+
+        time.sleep(0.1)  # Adjust delay based on responsiveness and sensor accuracy
+
+except KeyboardInterrupt:
+    print("Program interrupted.")
+finally:
+    GPIO.cleanup()
