@@ -8,7 +8,6 @@ GPIO.setwarnings(False)
 GPIO.setup(11,GPIO.OUT)  # Sets up pin 11 to an output (instead of an input)
 pwn = GPIO.PWM(11, 50)     # Sets up pin 11 as a PWM pin
 pwn.start(0)               # Starts running PWM on the pin and sets it to 0
-angle = 90
 def SetAngle(angle):
 	duty = angle / 18 + 2
 	GPIO.output(11, True)
