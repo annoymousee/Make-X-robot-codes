@@ -16,7 +16,7 @@ def SetAngle(angle):
 	sleep(1)
 	GPIO.output(11, False)
 	pwm.ChangeDutyCycle(0)
-set = input("Set your angle": )
+set = input("Set your angle: ")
 SetAngle(set)
 
 # Clean up everything
