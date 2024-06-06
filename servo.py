@@ -5,19 +5,19 @@ GPIO.setmode(GPIO.BOARD) # Sets the pin numbering system to use the physical lay
 GPIO.setwarnings(False)
 
 # Set up pin 11 for PWM
-GPIO.setup(11,GPIO.OUT)  # Sets up pin 11 to an output (instead of an input)
-pwn = GPIO.PWM(11, 50)     # Sets up pin 11 as a PWM pin
+GPIO.setup(03,GPIO.OUT)  # Sets up pin 11 to an output (instead of an input)
+pwn = GPIO.PWM(03, 50)     # Sets up pin 11 as a PWM pin
 pwn.start(0)               # Starts running PWM on the pin and sets it to 0
 def SetAngle(angle):
 	duty = angle / 18 + 2
-	GPIO.output(11, True)
-	pwm.ChangeDutyCycle(duty)
+	GPIO.output(03, True)
+	pwn.ChangeDutyCycle(duty)
 	sleep(1)
-	GPIO.output(11, False)
-	pwm.ChangeDutyCycle(0)
+	GPIO.output(03, False)
+	pwn.ChangeDutyCycle(0)
 set = input("Set your angle: ")
 SetAngle(set)
 
 # Clean up everything
-p.stop()                 # At the end of the program, stop the PWM
+pwn.stop()                 # At the end of the program, stop the PWM
 GPIO.cleanup()           # Resets the GPIO pins back to defaults
